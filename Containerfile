@@ -6,20 +6,21 @@ MAINTAINER Red Hat Training <training@redhat.com>
 ENV DOCROOT=/var/www/html 
 
 
-RUN   yum install -y --nodocs --disableplugin=subscription-manager httpd
-RUN yum clean all --disableplugin=subscription-manager -y
-RUN echo "Hello from the httpd container!" > ${DOCROOT}/index.html
+RUN   yum install -y --nodocs --disableplugin=subscription-manager httpd && \
+yum clean all --disableplugin=subscription-manager -y && \
+echo "Hello from the httpd container!" > ${DOCROOT}/index.html
 
 # Allows child images to inject their own content into DocumentRoot
 ONBUILD COPY src/ ${DOCROOT}/
 
-EXPOSE 80
+EXPOSE 8080
 
 # This stuff is needed to ensure a clean start
 RUN rm -rf /run/httpd && mkdir /run/httpd
-
+RUN chgrp -R 0 /var/run/httpd /var/log/httpd && chmod -R g=u /var/run/httpd /var/log/httpd
+RUN sed -i "s/Listen 80/Listen 8080/g" /etc/httpd/conf/httpd.conf
 # Run as the root user
-USER root
+USER 1001
 
 # Launch httpd
 CMD /usr/sbin/httpd -DFOREGROUND
