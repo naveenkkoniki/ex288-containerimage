@@ -1,12 +1,12 @@
 FROM registry.access.redhat.com/rhscl/httpd-24-rhel7
 #FROM registry.access.redhat.com/ubi8/ubi:8.0
 # DocumentRoot for Apache
-ENV DOCROOT=/var/www/html
+
 USER root
 #RUN yum install -y --disableplugin=subscription-manager httpd && yum clean all --disableplugin=subscription-manager -y
 RUN echo "Hello from the httpd container!" > ${DOCROOT}/index.html
 # Allows child images to inject their own content into DocumentRoot
-ONBUILD COPY src/ ${DOCROOT}/
+
 EXPOSE 8080
 # This stuff is needed to ensure a clean start
 #RUN rm -rf /run/httpd && mkdir /run/httpd
